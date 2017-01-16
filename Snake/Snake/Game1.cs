@@ -13,6 +13,7 @@ namespace Snake
         SpriteBatch spriteBatch;
         Texture2D texture;
         Vector2 position = Vector2.Zero;
+        string X = "empty";
         float speed = 2f;
         float move = 1;
         public Game1()
@@ -65,19 +66,40 @@ namespace Snake
             KeyboardState keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if()
-            position.X += move*speed;
+            if (X.Equals("right") || X.Equals("left"))
+            {
+                position.X += move * speed;
+            }
+            else if(X.Equals("up") || X.Equals("down"))
+            {
+                position.Y += move * speed;
+            }
             if (keyboardState.IsKeyDown(Keys.Left))
+            {
                 move = -1;
+                X = "left";
+            }
             if (keyboardState.IsKeyDown(Keys.Right))
+            {
                 move = 1;
+                X = "right";
+            }
             if (keyboardState.IsKeyDown(Keys.Up))
+            {
                 move = -1;
+                X = "up";
+            }
             if (keyboardState.IsKeyDown(Keys.Down))
+            {
                 move = 1;
+                X = "down";
+            }
             // TODO: Add your update logic here
-
-            base.Update(gameTime);
+            if (position.X > Window.ClientBounds.Width - texture.Width -1 || position.X < 0 || position.Y > Window.ClientBounds.Height - texture.Height -1 || position.Y < 0)
+            {
+                X = "empty";
+            }
+                base.Update(gameTime);
         }
 
         /// <summary>
