@@ -13,7 +13,7 @@ namespace Snake
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteBatch foodSprite;
-        Texture2D texture;
+        Texture2D snakeTexture;
         Texture2D foodTexture;
         Vector2 snakePosition;
         Vector2 snakeBodyPosition;
@@ -93,7 +93,7 @@ namespace Snake
             }
             else { }
 
-            if (X.Equals("right") || X.Equals("left"))
+            if (X == 0 || X == 1)
             {
                 snakePosition.X += move * speed;
             }
