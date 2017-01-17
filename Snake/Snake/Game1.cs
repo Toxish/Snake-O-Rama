@@ -30,7 +30,7 @@ namespace Snake
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            foodPosition = new Vector2(Window.ClientBounds.Width / 2, 0);
+            foodPosition = Vector2.Zero;
             snakePosition = Vector2.Zero;
             snakeBodyPosition = Vector2.Zero;
         }
@@ -120,7 +120,7 @@ namespace Snake
             if ((Collide()))
             {
                 Increase();
-                foodPosition = new Vector2(Window.ClientBounds.Width / 2, 200);
+                foodPosition = Vector2.Zero;
             }
             base.Update(gameTime);
         }
@@ -156,25 +156,29 @@ namespace Snake
                 if (X == 0 && snakeSize > 1)
                 {
                     spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.X - 20;
+                    snakeBodyPosition.X = snakePosition.X - 20 * i - 1;
+                    snakeBodyPosition.Y = snakePosition.Y;
                     spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
                 }
                 else if (X == 1 && snakeSize > 1)
                 {
                     spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.X +20;
+                    snakeBodyPosition.X = snakePosition.X +20 * i - 1;
+                    snakeBodyPosition.Y = snakePosition.Y;
                     spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
                 }
                 else if (X == 2 && snakeSize > 1)
                 {
                     spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.Y = snakePosition.Y + 20;
+                    snakeBodyPosition.X = snakePosition.X;
+                    snakeBodyPosition.Y = snakePosition.Y + 20 * i - 1;
                     spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
                 }
                 else if (X == 3 && snakeSize > 1)
                 {
                     spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.Y = snakePosition.Y - 20;
+                    snakeBodyPosition.X = snakePosition.X;
+                    snakeBodyPosition.Y = snakePosition.Y - 20 * i - 1;
                     spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
                 }
                 else
@@ -205,7 +209,18 @@ namespace Snake
             if(X == 0)
             {
                 snakeSize++;
-
+            }
+            else if (X == 1)
+            {
+                snakeSize++;
+            }
+            else if (X == 2)
+            {
+                snakeSize++;
+            }
+            else if (X == 3)
+            {
+                snakeSize++;
             }
         }
     }
