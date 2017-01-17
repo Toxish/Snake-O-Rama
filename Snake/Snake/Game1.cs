@@ -93,7 +93,7 @@ namespace Snake
             }
             else { }
 
-            if (X == 0 || X == 1)
+            if (X == 1 || X == 0)
             {
                 snakePosition.X += move * speed;
             }
@@ -129,7 +129,7 @@ namespace Snake
             if ((Collide()))
             {
                 Increase();
-                foodPosition = new Vector2(Window.ClientBounds.Width / 2, 100);
+                foodPosition = new Vector2(Window.ClientBounds.Width / 2, 200);
             }
             base.Update(gameTime);
         }
@@ -164,13 +164,13 @@ namespace Snake
                 else if (X == 2 && snakeSize > 1)
                 {
                     spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.Y - 20;
+                    snakeBodyPosition.Y = snakePosition.Y + 20;
                     spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
                 }
                 else if (X == 3 && snakeSize > 1)
                 {
                     spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.Y + 20;
+                    snakeBodyPosition.Y = snakePosition.Y - 20;
                     spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
                 }
                 else
