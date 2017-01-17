@@ -11,11 +11,16 @@ namespace Snake
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteBatch foodSprite;
         Texture2D texture;
+        Texture2D foodTexture;
         Vector2 position = Vector2.Zero;
+        Vector2 foodPosition = Vector2.Zero;
         string X = "empty";
         float speed = 2f;
         float move = 1;
+        
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -44,6 +49,7 @@ namespace Snake
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Content.Load<Texture2D>("body");
+            foodTexture = Content.Load<Texture2D>("nyamka");
             // TODO: use this.Content to load your game content here
         }
 
@@ -112,6 +118,11 @@ namespace Snake
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
             spriteBatch.Draw(texture, position, Color.White);
             spriteBatch.End();
+
+            foodSprite.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+            foodSprite.Draw(foodTexture, foodPosition, Color.Black);
+            foodSprite.End();
+
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
