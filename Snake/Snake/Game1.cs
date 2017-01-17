@@ -87,8 +87,8 @@ namespace Snake
             {
                 do
                 {
-                    foodPosition.X = random.Next(Window.ClientBounds.Width - foodTexture.Width - 1, 0);
-                    foodPosition.Y = random.Next(Window.ClientBounds.Height - foodTexture.Height - 1, 0);
+                    foodPosition.X = random.Next(0, Window.ClientBounds.Width - foodTexture.Width - 1);
+                    foodPosition.Y = random.Next(0, Window.ClientBounds.Height - foodTexture.Height - 1);
                 } while (FoodPositionOnSnake());
             }
             else { }
