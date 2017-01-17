@@ -82,16 +82,7 @@ namespace Snake
             KeyboardState keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            Random random = new Random();
-            if (foodPosition == Vector2.Zero)
-            {
-                do
-                {
-                    foodPosition.X = random.Next(Window.ClientBounds.Width - foodTexture.Width - 1, 0);
-                    foodPosition.Y = random.Next(Window.ClientBounds.Height - foodTexture.Height - 1, 0);
-                } while (FoodPositionOnSnake());
-            }
-            else { }
+            GenerateFoodPosition();
 
             if (X == 1 || X == 0)
             {
@@ -132,6 +123,19 @@ namespace Snake
                 foodPosition = new Vector2(Window.ClientBounds.Width / 2, 200);
             }
             base.Update(gameTime);
+        }
+
+        private void GenerateFoodPosition()
+        {
+            Random random = new Random();
+            if (foodPosition == Vector2.Zero)
+            {
+                do
+                {
+                    foodPosition.X = random.Next(0, Window.ClientBounds.Width - foodTexture.Width - 1);
+                    foodPosition.Y = random.Next(0, Window.ClientBounds.Height - foodTexture.Height - 1);
+                } while (FoodPositionOnSnake());
+            }
         }
 
         private bool FoodPositionOnSnake()
