@@ -117,11 +117,8 @@ namespace Snake
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
             spriteBatch.Draw(texture, position, Color.White);
+            spriteBatch.Draw(foodTexture, foodPosition, Color.White);
             spriteBatch.End();
-
-            foodSprite.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            foodSprite.Draw(foodTexture, foodPosition, Color.Black);
-            foodSprite.End();
 
             // TODO: Add your drawing code here
 
