@@ -11,20 +11,26 @@ namespace Snake
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        SpriteBatch foodSprite;
-        Texture2D texture;
+        Texture2D snakeTexture;
         Texture2D foodTexture;
-        Vector2 position = Vector2.Zero;
-        Vector2 foodPosition = Vector2.Zero;
-        string X = "empty";
+        Vector2 snakePosition;
+        Vector2 snakeBodyPosition;
+        Vector2 foodPosition;
+        Point snakeSpriteSize;
+        Point foodSpriteSize;
+        int X = 4;
+        int snakeSize = 1;
         float speed = 2f;
         float move = 1;
-        
+        enum direct : int {right, left, up, down}
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            foodPosition = new Vector2(Window.ClientBounds.Width / 2, 0);
+            snakePosition = Vector2.Zero;
+            snakeBodyPosition = Vector2.Zero;
         }
 
         /// <summary>
@@ -48,8 +54,10 @@ namespace Snake
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            texture = Content.Load<Texture2D>("body");
+            snakeTexture = Content.Load<Texture2D>("body");
             foodTexture = Content.Load<Texture2D>("nyamka");
+            snakeSpriteSize = new Point(snakeTexture.Width, snakeTexture.Height);
+            foodSpriteSize = new Point(foodTexture.Width, foodTexture.Height);
             // TODO: use this.Content to load your game content here
         }
 
@@ -72,40 +80,45 @@ namespace Snake
             KeyboardState keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if (X.Equals("right") || X.Equals("left"))
+            if (X == 0 || X == 1)
             {
-                position.X += move * speed;
+                snakePosition.X += move * speed;
             }
-            else if(X.Equals("up") || X.Equals("down"))
+            else if (X == 2 || X == 3)
             {
-                position.Y += move * speed;
+                snakePosition.Y += move * speed;
             }
             if (keyboardState.IsKeyDown(Keys.Left))
             {
                 move = -1;
-                X = "left";
+                X = (int)direct.left;
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
                 move = 1;
-                X = "right";
+                X = (int)direct.right;
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
                 move = -1;
-                X = "up";
+                X = (int)direct.up;
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
                 move = 1;
-                X = "down";
+                X = (int)direct.down;
             }
             // TODO: Add your update logic here
-            if (position.X > Window.ClientBounds.Width - texture.Width -1 || position.X < 0 || position.Y > Window.ClientBounds.Height - texture.Height -1 || position.Y < 0)
+            if (snakePosition.X > Window.ClientBounds.Width - snakeTexture.Width - 1 || snakePosition.X < 0 || snakePosition.Y > Window.ClientBounds.Height - snakeTexture.Height - 1 || snakePosition.Y < 0)
             {
-                X = "empty";
+                X = 4;
             }
-                base.Update(gameTime);
+            if ((Collide()))
+            {
+                Increase();
+                foodPosition = new Vector2(Window.ClientBounds.Width / 2, 100);
+            }
+            base.Update(gameTime);
         }
 
         /// <summary>
@@ -116,13 +129,62 @@ namespace Snake
         {
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            spriteBatch.Draw(texture, position, Color.White);
+            for (int i = 0; i < snakeSize; i++)
+            {
+                if (X == 0 && snakeSize > 1)
+                {
+                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
+                    snakeBodyPosition.X = snakePosition.X - 20;
+                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
+                }
+                else if (X == 1 && snakeSize > 1)
+                {
+                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
+                    snakeBodyPosition.X = snakePosition.X +20;
+                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
+                }
+                else if (X == 2 && snakeSize > 1)
+                {
+                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
+                    snakeBodyPosition.X = snakePosition.Y - 20;
+                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
+                }
+                else if (X == 3 && snakeSize > 1)
+                {
+                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
+                    snakeBodyPosition.X = snakePosition.Y + 20;
+                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
+                }
+                else
+                spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
+            }
             spriteBatch.Draw(foodTexture, foodPosition, Color.White);
             spriteBatch.End();
 
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+        /// <summary>
+        /// Обработка столкновений
+        /// </summary>
+        /// <returns></returns>
+        protected bool Collide()
+        {
+            Rectangle goodSpriteRect = new Rectangle((int)snakePosition.X,
+                (int)snakePosition.Y, snakeSpriteSize.X, snakeSpriteSize.Y);
+            Rectangle evilSpriteRect = new Rectangle((int)foodPosition.X,
+                (int)foodPosition.Y, foodSpriteSize.X, foodSpriteSize.Y);
+
+            return goodSpriteRect.Intersects(evilSpriteRect);
+        }
+        protected void Increase()
+        {
+            if(X == 0)
+            {
+                snakeSize++;
+
+            }
         }
     }
 }
