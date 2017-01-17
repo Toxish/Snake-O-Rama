@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Snake
 {
@@ -11,7 +12,8 @@ namespace Snake
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D snakeTexture;
+        SpriteBatch foodSprite;
+        Texture2D texture;
         Texture2D foodTexture;
         Vector2 snakePosition;
         Vector2 snakeBodyPosition;
@@ -80,7 +82,18 @@ namespace Snake
             KeyboardState keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if (X == 0 || X == 1)
+            Random random = new Random();
+            if (foodPosition == Vector2.Zero)
+            {
+                do
+                {
+                    foodPosition.X = random.Next(Window.ClientBounds.Width - foodTexture.Width - 1, 0);
+                    foodPosition.Y = random.Next(Window.ClientBounds.Height - foodTexture.Height - 1, 0);
+                } while (FoodPositionOnSnake());
+            }
+            else { }
+
+            if (X.Equals("right") || X.Equals("left"))
             {
                 snakePosition.X += move * speed;
             }
@@ -119,6 +132,11 @@ namespace Snake
                 foodPosition = new Vector2(Window.ClientBounds.Width / 2, 100);
             }
             base.Update(gameTime);
+        }
+
+        private bool FoodPositionOnSnake()
+        {
+            return false;
         }
 
         /// <summary>
