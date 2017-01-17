@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Snake
 {
@@ -11,7 +12,6 @@ namespace Snake
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        SpriteBatch foodSprite;
         Texture2D texture;
         Texture2D foodTexture;
         Vector2 position = Vector2.Zero;
@@ -72,6 +72,17 @@ namespace Snake
             KeyboardState keyboardState = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            Random random = new Random();
+            if (foodPosition == Vector2.Zero)
+            {
+                do
+                {
+                    foodPosition.X = random.Next(Window.ClientBounds.Width - foodTexture.Width - 1, 0);
+                    foodPosition.Y = random.Next(Window.ClientBounds.Height - foodTexture.Height - 1, 0);
+                } while (FoodPositionOnSnake());
+            }
+            else { }
+
             if (X.Equals("right") || X.Equals("left"))
             {
                 position.X += move * speed;
@@ -108,6 +119,11 @@ namespace Snake
                 base.Update(gameTime);
         }
 
+        private bool FoodPositionOnSnake()
+        {
+            return false;
+        }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -117,11 +133,8 @@ namespace Snake
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
             spriteBatch.Draw(texture, position, Color.White);
+            spriteBatch.Draw(foodTexture, foodPosition, Color.Black);
             spriteBatch.End();
-
-            foodSprite.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            foodSprite.Draw(foodTexture, foodPosition, Color.Black);
-            foodSprite.End();
 
             // TODO: Add your drawing code here
 
