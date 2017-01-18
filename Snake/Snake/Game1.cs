@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Snake
 {
@@ -18,13 +19,14 @@ namespace Snake
         Vector2 snakePosition;
         Vector2 snakeBodyPosition;
         Vector2 foodPosition;
+        List<Vector2> snakeBody;
         Point snakeSpriteSize;
         Point foodSpriteSize;
         int X = 4;
         int snakeSize = 1;
         float speed = 2f;
         float move = 1;
-        enum direct : int {right, left, up, down}
+        enum direct : int { right, left, up, down }
 
         public Game1()
         {
@@ -44,7 +46,7 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            snakeBody = new List<Vector2>();
             base.Initialize();
         }
 
@@ -83,7 +85,7 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             GenerateFoodPosition();
-
+            Vector2 oldSnakePosition = snakePosition;
             if (X == 1 || X == 0)
             {
                 snakePosition.X += move * speed;
@@ -120,7 +122,22 @@ namespace Snake
             if ((Collide()))
             {
                 Increase();
+                snakeBody.Add(Vector2.Zero);
+                if (snakeBody.Count > 1)
+                    for (int i = snakeBody.Count - 1; i > 0; i--)
+                        snakeBody[i] = snakeBody[i - 1];
+                snakeBody[0] = oldSnakePosition;
                 foodPosition = Vector2.Zero;
+            }
+            else
+            {
+                if (snakeBody.Count > 1)
+                {
+                    for (int i = snakeBody.Count - 1; i > 0; i--)
+                        snakeBody[i] = snakeBody[i - 1];
+                }
+                if (snakeBody.Count > 0)
+                    snakeBody[0] = oldSnakePosition;
             }
             base.Update(gameTime);
         }
@@ -151,39 +168,9 @@ namespace Snake
         {
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            for (int i = 0; i < snakeSize; i++)
-            {
-                if (X == 0 && snakeSize > 1)
-                {
-                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.X - 20 * i - 1;
-                    snakeBodyPosition.Y = snakePosition.Y;
-                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
-                }
-                else if (X == 1 && snakeSize > 1)
-                {
-                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.X +20 * i - 1;
-                    snakeBodyPosition.Y = snakePosition.Y;
-                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
-                }
-                else if (X == 2 && snakeSize > 1)
-                {
-                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.X;
-                    snakeBodyPosition.Y = snakePosition.Y + 20 * i - 1;
-                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
-                }
-                else if (X == 3 && snakeSize > 1)
-                {
-                    spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-                    snakeBodyPosition.X = snakePosition.X;
-                    snakeBodyPosition.Y = snakePosition.Y - 20 * i - 1;
-                    spriteBatch.Draw(snakeTexture, snakeBodyPosition, Color.White);
-                }
-                else
-                spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-            }
+            spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
+            for (int i = 0; i < snakeBody.Count; i++)
+                spriteBatch.Draw(snakeTexture, snakeBody[i], Color.White);
             spriteBatch.Draw(foodTexture, foodPosition, Color.White);
             spriteBatch.End();
 
@@ -204,6 +191,7 @@ namespace Snake
 
             return goodSpriteRect.Intersects(evilSpriteRect);
         }
+
         protected void Increase()
         {
             if (X == 0)
