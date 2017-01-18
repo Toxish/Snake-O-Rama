@@ -13,10 +13,19 @@ namespace Snake
         public float move = 1;
         public int X = 4;
         public List<Vector2> snakeBody;
+        public int BodySize { get { return snakeBody.Count; } }
         public Vector2 snakePosition;
         public Vector2 snakeBodyPosition;
         public Texture2D snakeTexture;
         public Point snakeSpriteSize;
+
+
+        public SnakeParam()
+        {
+            snakeBody = new List<Vector2>();
+            snakePosition = Vector2.Zero;
+            snakeBodyPosition = Vector2.Zero;
+        }
     }
     /// <summary>
     /// This is the main type for your game.
@@ -25,7 +34,6 @@ namespace Snake
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        SpriteBatch foodSprite;
         Texture2D foodTexture;
         Vector2 foodPosition;
         Point foodSpriteSize;
@@ -33,12 +41,9 @@ namespace Snake
         SnakeParam snake = new SnakeParam();
         public Game1()
         {
-
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             foodPosition = Vector2.Zero;
-            snake.snakePosition = Vector2.Zero;
-            snake.snakeBodyPosition = Vector2.Zero;
         }
 
         /// <summary>
@@ -50,7 +55,7 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            snake.snakeBody = new List<Vector2>();
+
             base.Initialize();
         }
 
@@ -127,20 +132,18 @@ namespace Snake
             {
                 Increase();
                 snake.snakeBody.Add(Vector2.Zero);
-                if (snake.snakeBody.Count > 1)
-                    for (int i = snake.snakeBody.Count - 1; i > 0; i--)
+                if (snake.BodySize > 1)
+                    for (int i = snake.BodySize - 1; i > 0; i--)
                         snake.snakeBody[i] = snake.snakeBody[i - 1];
                 snake.snakeBody[0] = oldSnakePosition;
                 foodPosition = Vector2.Zero;
             }
             else
             {
-                if (snake.snakeBody.Count > 1)
-                {
-                    for (int i = snake.snakeBody.Count - 1; i > 0; i--)
+                if (snake.BodySize > 1)
+                    for (int i = snake.BodySize - 1; i > 0; i--)
                         snake.snakeBody[i] = snake.snakeBody[i - 1];
-                }
-                if (snake.snakeBody.Count > 0)
+                if (snake.BodySize > 0)
                     snake.snakeBody[0] = oldSnakePosition;
             }
             base.Update(gameTime);
@@ -173,7 +176,7 @@ namespace Snake
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
             spriteBatch.Draw(snake.snakeTexture, snake.snakePosition, Color.White);
-            for (int i = 0; i < snake.snakeBody.Count; i++)
+            for (int i = 0; i < snake.BodySize; i++)
                 spriteBatch.Draw(snake.snakeTexture, snake.snakeBody[i], Color.White);
             spriteBatch.Draw(foodTexture, foodPosition, Color.White);
             spriteBatch.End();
@@ -198,7 +201,7 @@ namespace Snake
 
         protected void Increase()
         {
-                snake.snakeSize++;
+            snake.snakeSize++;
         }
     }
 }
