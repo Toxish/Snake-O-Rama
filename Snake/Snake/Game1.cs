@@ -206,7 +206,7 @@ namespace Snake
         }
         protected void Increase()
         {
-            if(X == 0)
+            if (X == 0)
             {
                 snakeSize++;
             }
