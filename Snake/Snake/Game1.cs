@@ -6,6 +6,18 @@ using System.Collections.Generic;
 
 namespace Snake
 {
+    public class SnakeParam
+    {
+        public int snakeSize = 1;
+        public float speed = 3f;
+        public float move = 1;
+        public int X = 4;
+        public List<Vector2> snakeBody;
+        public Vector2 snakePosition;
+        public Vector2 snakeBodyPosition;
+        public Texture2D snakeTexture;
+        public Point snakeSpriteSize;
+    }
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -14,27 +26,19 @@ namespace Snake
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteBatch foodSprite;
-        Texture2D snakeTexture;
         Texture2D foodTexture;
-        Vector2 snakePosition;
-        Vector2 snakeBodyPosition;
         Vector2 foodPosition;
-        List<Vector2> snakeBody;
-        Point snakeSpriteSize;
         Point foodSpriteSize;
-        int X = 4;
-        int snakeSize = 1;
-        float speed = 2f;
-        float move = 1;
-        enum direct : int { right, left, up, down }
-
+        enum direct : int { right, left, up, down };
+        SnakeParam snake = new SnakeParam();
         public Game1()
         {
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             foodPosition = Vector2.Zero;
-            snakePosition = Vector2.Zero;
-            snakeBodyPosition = Vector2.Zero;
+            snake.snakePosition = Vector2.Zero;
+            snake.snakeBodyPosition = Vector2.Zero;
         }
 
         /// <summary>
@@ -46,7 +50,7 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            snakeBody = new List<Vector2>();
+            snake.snakeBody = new List<Vector2>();
             base.Initialize();
         }
 
@@ -58,9 +62,9 @@ namespace Snake
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            snakeTexture = Content.Load<Texture2D>("body");
+            snake.snakeTexture = Content.Load<Texture2D>("body");
             foodTexture = Content.Load<Texture2D>("nyamka");
-            snakeSpriteSize = new Point(snakeTexture.Width, snakeTexture.Height);
+            snake.snakeSpriteSize = new Point(snake.snakeTexture.Width, snake.snakeTexture.Height);
             foodSpriteSize = new Point(foodTexture.Width, foodTexture.Height);
             // TODO: use this.Content to load your game content here
         }
@@ -85,59 +89,59 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             GenerateFoodPosition();
-            Vector2 oldSnakePosition = snakePosition;
-            if (X == 1 || X == 0)
+            Vector2 oldSnakePosition = snake.snakePosition;
+            if (snake.X == 1 || snake.X == 0)
             {
-                snakePosition.X += move * speed;
+                snake.snakePosition.X += snake.move * snake.speed;
             }
-            else if (X == 2 || X == 3)
+            else if (snake.X == 2 || snake.X == 3)
             {
-                snakePosition.Y += move * speed;
+                snake.snakePosition.Y += snake.move * snake.speed;
             }
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                move = -1;
-                X = (int)direct.left;
+                snake.move = -1;
+                snake.X = (int)direct.left;
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
-                move = 1;
-                X = (int)direct.right;
+                snake.move = 1;
+                snake.X = (int)direct.right;
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                move = -1;
-                X = (int)direct.up;
+                snake.move = -1;
+                snake.X = (int)direct.up;
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
-                move = 1;
-                X = (int)direct.down;
+                snake.move = 1;
+                snake.X = (int)direct.down;
             }
             // TODO: Add your update logic here
-            if (snakePosition.X > Window.ClientBounds.Width - snakeTexture.Width - 1 || snakePosition.X < 0 || snakePosition.Y > Window.ClientBounds.Height - snakeTexture.Height - 1 || snakePosition.Y < 0)
+            if (snake.snakePosition.X > Window.ClientBounds.Width - snake.snakeTexture.Width - 1 || snake.snakePosition.X < 0 || snake.snakePosition.Y > Window.ClientBounds.Height - snake.snakeTexture.Height - 1 || snake.snakePosition.Y < 0)
             {
-                X = 4;
+                snake.X = 4;
             }
             if ((Collide()))
             {
                 Increase();
-                snakeBody.Add(Vector2.Zero);
-                if (snakeBody.Count > 1)
-                    for (int i = snakeBody.Count - 1; i > 0; i--)
-                        snakeBody[i] = snakeBody[i - 1];
-                snakeBody[0] = oldSnakePosition;
+                snake.snakeBody.Add(Vector2.Zero);
+                if (snake.snakeBody.Count > 1)
+                    for (int i = snake.snakeBody.Count - 1; i > 0; i--)
+                        snake.snakeBody[i] = snake.snakeBody[i - 1];
+                snake.snakeBody[0] = oldSnakePosition;
                 foodPosition = Vector2.Zero;
             }
             else
             {
-                if (snakeBody.Count > 1)
+                if (snake.snakeBody.Count > 1)
                 {
-                    for (int i = snakeBody.Count - 1; i > 0; i--)
-                        snakeBody[i] = snakeBody[i - 1];
+                    for (int i = snake.snakeBody.Count - 1; i > 0; i--)
+                        snake.snakeBody[i] = snake.snakeBody[i - 1];
                 }
-                if (snakeBody.Count > 0)
-                    snakeBody[0] = oldSnakePosition;
+                if (snake.snakeBody.Count > 0)
+                    snake.snakeBody[0] = oldSnakePosition;
             }
             base.Update(gameTime);
         }
@@ -168,9 +172,9 @@ namespace Snake
         {
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            spriteBatch.Draw(snakeTexture, snakePosition, Color.White);
-            for (int i = 0; i < snakeBody.Count; i++)
-                spriteBatch.Draw(snakeTexture, snakeBody[i], Color.White);
+            spriteBatch.Draw(snake.snakeTexture, snake.snakePosition, Color.White);
+            for (int i = 0; i < snake.snakeBody.Count; i++)
+                spriteBatch.Draw(snake.snakeTexture, snake.snakeBody[i], Color.White);
             spriteBatch.Draw(foodTexture, foodPosition, Color.White);
             spriteBatch.End();
 
@@ -184,32 +188,17 @@ namespace Snake
         /// <returns></returns>
         protected bool Collide()
         {
-            Rectangle goodSpriteRect = new Rectangle((int)snakePosition.X,
-                (int)snakePosition.Y, snakeSpriteSize.X, snakeSpriteSize.Y);
-            Rectangle evilSpriteRect = new Rectangle((int)foodPosition.X,
+            Rectangle snakeSpriteRect = new Rectangle((int)snake.snakePosition.X,
+                (int)snake.snakePosition.Y, snake.snakeSpriteSize.X, snake.snakeSpriteSize.Y);
+            Rectangle foodSpriteRect = new Rectangle((int)foodPosition.X,
                 (int)foodPosition.Y, foodSpriteSize.X, foodSpriteSize.Y);
 
-            return goodSpriteRect.Intersects(evilSpriteRect);
+            return snakeSpriteRect.Intersects(foodSpriteRect);
         }
 
         protected void Increase()
         {
-            if (X == 0)
-            {
-                snakeSize++;
-            }
-            else if (X == 1)
-            {
-                snakeSize++;
-            }
-            else if (X == 2)
-            {
-                snakeSize++;
-            }
-            else if (X == 3)
-            {
-                snakeSize++;
-            }
+                snake.snakeSize++;
         }
     }
 }
