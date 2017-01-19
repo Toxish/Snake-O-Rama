@@ -13,7 +13,9 @@ namespace Snake
         public float move = 1;
         public int X = 4;
         public List<Vector2> snakeBody;
+        public List<Vector3> snakeBodyWithDirs;
         public int BodySize { get { return snakeBody.Count; } }
+
         public Vector2 snakePosition;
         public Vector2 snakeBodyPosition;
         public Texture2D snakeTexture;
@@ -26,6 +28,49 @@ namespace Snake
             snakePosition = Vector2.Zero;
             snakeBodyPosition = Vector2.Zero;
         }
+
+        private void MoveHorizontally()
+        {
+            snakePosition.X += move * speed;
+        }
+
+        private void MoveVertically()
+        {
+            snakePosition.Y += move * speed;
+        }
+
+        public void Move()
+        {
+            if (X == 1 || X == 0)
+                MoveHorizontally();
+            else
+            if (X == 2 || X == 3)
+                MoveVertically();
+        }
+
+        public void Turn(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                move = -1;
+                X = (int)Game1.direct.left;
+            }
+            if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                move = 1;
+                X = (int)Game1.direct.right;
+            }
+            if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                move = -1;
+                X = (int)Game1.direct.up;
+            }
+            if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                move = 1;
+                X = (int)Game1.direct.down;
+            }
+        }
     }
     /// <summary>
     /// This is the main type for your game.
@@ -37,7 +82,7 @@ namespace Snake
         Texture2D foodTexture;
         Vector2 foodPosition;
         Point foodSpriteSize;
-        enum direct : int { right, left, up, down };
+        public enum direct : int { right, left, up, down };
         SnakeParam snake = new SnakeParam();
         public Game1()
         {
@@ -95,39 +140,15 @@ namespace Snake
                 Exit();
             GenerateFoodPosition();
             Vector2 oldSnakePosition = snake.snakePosition;
-            if (snake.X == 1 || snake.X == 0)
-            {
-                snake.snakePosition.X += snake.move * snake.speed;
-            }
-            else if (snake.X == 2 || snake.X == 3)
-            {
-                snake.snakePosition.Y += snake.move * snake.speed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                snake.move = -1;
-                snake.X = (int)direct.left;
-            }
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                snake.move = 1;
-                snake.X = (int)direct.right;
-            }
-            if (keyboardState.IsKeyDown(Keys.Up))
-            {
-                snake.move = -1;
-                snake.X = (int)direct.up;
-            }
-            if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                snake.move = 1;
-                snake.X = (int)direct.down;
-            }
-            // TODO: Add your update logic here
+
+            snake.Move();
+            snake.Turn(keyboardState);
+            
             if (snake.snakePosition.X > Window.ClientBounds.Width - snake.snakeTexture.Width - 1 || snake.snakePosition.X < 0 || snake.snakePosition.Y > Window.ClientBounds.Height - snake.snakeTexture.Height - 1 || snake.snakePosition.Y < 0)
             {
                 snake.X = 4;
             }
+
             if ((Collide()))
             {
                 Increase();
