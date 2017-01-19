@@ -52,23 +52,35 @@ namespace Snake
         {
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                move = -1;
-                X = (int)Game1.direct.left;
+                if (X != (int)Game1.direct.right)
+                {
+                    move = -1;
+                    X = (int)Game1.direct.left;
+                }
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
-                move = 1;
-                X = (int)Game1.direct.right;
+                if (X != (int)Game1.direct.left)
+                {
+                    move = 1;
+                    X = (int)Game1.direct.right;
+                }
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                move = -1;
-                X = (int)Game1.direct.up;
+                if (X != (int)Game1.direct.down)
+                {
+                    move = -1;
+                    X = (int)Game1.direct.up;
+                }
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
-                move = 1;
-                X = (int)Game1.direct.down;
+                if (X != (int)Game1.direct.up)
+                {
+                    move = 1;
+                    X = (int)Game1.direct.down;
+                }
             }
         }
     }
@@ -143,7 +155,7 @@ namespace Snake
 
             snake.Move();
             snake.Turn(keyboardState);
-            
+
             if (snake.snakePosition.X > Window.ClientBounds.Width - snake.snakeTexture.Width - 1 || snake.snakePosition.X < 0 || snake.snakePosition.Y > Window.ClientBounds.Height - snake.snakeTexture.Height - 1 || snake.snakePosition.Y < 0)
             {
                 snake.X = 4;
