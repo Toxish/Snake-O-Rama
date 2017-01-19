@@ -29,23 +29,23 @@ namespace Snake
             snakeBodyPosition = Vector2.Zero;
         }
 
-        private void MoveHorizontally()
-        {
-            snakePosition.X += move * speed;
-        }
-
-        private void MoveVertically()
-        {
-            snakePosition.Y += move * speed;
-        }
-
         public void Move()
         {
-            if (X == 1 || X == 0)
-                MoveHorizontally();
-            else
-            if (X == 2 || X == 3)
-                MoveVertically();
+            switch (X)
+            {
+                case 0:
+                    snakePosition.X += speed;
+                    break;
+                case 1:
+                    snakePosition.X -= speed;
+                    break;
+                case 2:
+                    snakePosition.Y -= speed;
+                    break;
+                case 3:
+                    snakePosition.Y += speed;
+                    break;
+            }
         }
 
         public void Turn(KeyboardState keyboardState)
@@ -53,34 +53,22 @@ namespace Snake
             if (keyboardState.IsKeyDown(Keys.Left))
             {
                 if (X != (int)Game1.direct.right)
-                {
-                    move = -1;
                     X = (int)Game1.direct.left;
-                }
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
                 if (X != (int)Game1.direct.left)
-                {
-                    move = 1;
                     X = (int)Game1.direct.right;
-                }
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
                 if (X != (int)Game1.direct.down)
-                {
-                    move = -1;
                     X = (int)Game1.direct.up;
-                }
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
                 if (X != (int)Game1.direct.up)
-                {
-                    move = 1;
                     X = (int)Game1.direct.down;
-                }
             }
         }
     }
