@@ -6,26 +6,63 @@ using System.Collections.Generic;
 
 namespace Snake
 {
+    public struct PosAndDir
+    {
+        public float X;
+        public float Y;
+        public int Dir;
+        public static PosAndDir Zero { get { return new PosAndDir(0, 0, 4); } }
+        public Vector2 ToVector2()
+        {
+            return new Vector2(X, Y);
+        }
+
+        public PosAndDir(float x, float y, int dir)
+        {
+            X = x;
+            Y = y;
+            Dir = dir;
+        }
+    }
     public class SnakeParam
     {
         public int snakeSize = 1;
-        public float speed = 3f;
-        public float move = 1;
+        public int speed = 3;
+        public int move = 1;
         public int X = 4;
-        public List<Vector2> snakeBody;
+        public List<PosAndDir> snakeBody;
         public List<Vector3> snakeBodyWithDirs;
         public int BodySize { get { return snakeBody.Count; } }
 
-        public Vector2 snakePosition;
+        public PosAndDir snakePosition;
         public Vector2 snakeBodyPosition;
         public Texture2D snakeTexture;
         public Point snakeSpriteSize;
 
+        public static PosAndDir GetNewBodyPos(PosAndDir pad)
+        {
+            switch (pad.Dir)
+            {
+                case 0:
+                    pad.X += 20;
+                    break;
+                case 1:
+                    pad.X -= 20;
+                    break;
+                case 2:
+                    pad.Y -= 20;
+                    break;
+                case 3:
+                    pad.Y += 20;
+                    break;
+            }
+            return new PosAndDir(pad.X, pad.Y, pad.Dir);
+        }
 
         public SnakeParam()
         {
-            snakeBody = new List<Vector2>();
-            snakePosition = Vector2.Zero;
+            snakeBody = new List<PosAndDir>();
+            snakePosition = PosAndDir.Zero;
             snakeBodyPosition = Vector2.Zero;
         }
 
@@ -139,7 +176,7 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             GenerateFoodPosition();
-            Vector2 oldSnakePosition = snake.snakePosition;
+            PosAndDir oldSnakePosition = snake.snakePosition;
 
             snake.Move();
             snake.Turn(keyboardState);
@@ -152,20 +189,20 @@ namespace Snake
             if ((Collide()))
             {
                 Increase();
-                snake.snakeBody.Add(Vector2.Zero);
+                snake.snakeBody.Add(PosAndDir.Zero);
                 if (snake.BodySize > 1)
                     for (int i = snake.BodySize - 1; i > 0; i--)
-                        snake.snakeBody[i] = snake.snakeBody[i - 1];
-                snake.snakeBody[0] = oldSnakePosition;
+                        snake.snakeBody[i] = SnakeParam.GetNewBodyPos(snake.snakeBody[i - 1]);
+                snake.snakeBody[0] = SnakeParam.GetNewBodyPos(oldSnakePosition);
                 foodPosition = Vector2.Zero;
             }
             else
             {
                 if (snake.BodySize > 1)
                     for (int i = snake.BodySize - 1; i > 0; i--)
-                        snake.snakeBody[i] = snake.snakeBody[i - 1];
+                        snake.snakeBody[i] = SnakeParam.GetNewBodyPos((snake.snakeBody[i - 1]));
                 if (snake.BodySize > 0)
-                    snake.snakeBody[0] = oldSnakePosition;
+                    snake.snakeBody[0] = SnakeParam.GetNewBodyPos(oldSnakePosition);
             }
             base.Update(gameTime);
         }
@@ -196,13 +233,11 @@ namespace Snake
         {
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            spriteBatch.Draw(snake.snakeTexture, snake.snakePosition, Color.White);
+            spriteBatch.Draw(snake.snakeTexture, snake.snakePosition.ToVector2(), Color.White);
             for (int i = 0; i < snake.BodySize; i++)
-                spriteBatch.Draw(snake.snakeTexture, snake.snakeBody[i], Color.White);
+                spriteBatch.Draw(snake.snakeTexture, snake.snakeBody[i].ToVector2(), Color.White);
             spriteBatch.Draw(foodTexture, foodPosition, Color.White);
             spriteBatch.End();
-
-            // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
