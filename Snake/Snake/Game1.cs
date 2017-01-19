@@ -41,22 +41,28 @@ namespace Snake
 
         public static PosAndDir GetNewBodyPos(PosAndDir pad)
         {
+            PosAndDir newpad = new PosAndDir();
+            newpad.Dir = pad.Dir;
             switch (pad.Dir)
             {
                 case 0:
-                    pad.X += 20;
+                    newpad.X = pad.X - 18;
+                    newpad.Y = pad.Y;
                     break;
                 case 1:
-                    pad.X -= 20;
+                    newpad.X = pad.X + 18;
+                    newpad.Y = pad.Y;
                     break;
                 case 2:
-                    pad.Y -= 20;
+                    newpad.Y = pad.Y + 18;
+                    newpad.X = pad.X;
                     break;
                 case 3:
-                    pad.Y += 20;
+                    newpad.Y = pad.Y - 18;
+                    newpad.X = pad.X;
                     break;
             }
-            return new PosAndDir(pad.X, pad.Y, pad.Dir);
+            return newpad;
         }
 
         public SnakeParam()
@@ -72,15 +78,19 @@ namespace Snake
             {
                 case 0:
                     snakePosition.X += speed;
+                    snakePosition.Dir = (int)Game1.direct.right;
                     break;
                 case 1:
                     snakePosition.X -= speed;
+                    snakePosition.Dir = (int)Game1.direct.left;
                     break;
                 case 2:
                     snakePosition.Y -= speed;
+                    snakePosition.Dir = (int)Game1.direct.up;
                     break;
                 case 3:
                     snakePosition.Y += speed;
+                    snakePosition.Dir = (int)Game1.direct.down;
                     break;
             }
         }
