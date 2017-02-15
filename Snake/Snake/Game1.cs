@@ -27,8 +27,8 @@ namespace Snake
     public class SnakeParam
     {
         public int snakeSize = 1;
-        public int speed = 3;
-        public int move = 1;
+        public static int speed = 3;
+        public static int move = 1;
         public int X = 4;
         public List<PosAndDir> snakeBody;
         public List<Vector3> snakeBodyWithDirs;
@@ -43,22 +43,23 @@ namespace Snake
         {
             PosAndDir newpad = new PosAndDir();
             newpad.Dir = pad.Dir;
+            const int delta = 18;
             switch (pad.Dir)
             {
                 case 0:
-                    newpad.X = pad.X - 18;
+                    newpad.X = pad.X - delta;
                     newpad.Y = pad.Y;
                     break;
                 case 1:
-                    newpad.X = pad.X + 18;
+                    newpad.X = pad.X + delta;
                     newpad.Y = pad.Y;
                     break;
                 case 2:
-                    newpad.Y = pad.Y + 18;
+                    newpad.Y = pad.Y + delta;
                     newpad.X = pad.X;
                     break;
                 case 3:
-                    newpad.Y = pad.Y - 18;
+                    newpad.Y = pad.Y - delta;
                     newpad.X = pad.X;
                     break;
             }
@@ -196,7 +197,7 @@ namespace Snake
                 snake.X = 4;
             }
 
-            if ((Collide()))
+            if (Collide())
             {
                 Increase();
                 snake.snakeBody.Add(PosAndDir.Zero);
